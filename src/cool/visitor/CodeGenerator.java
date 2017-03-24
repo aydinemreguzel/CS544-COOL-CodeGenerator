@@ -31,7 +31,7 @@ public class CodeGenerator implements Visitor<Reg> {
         for (Klass klass : program.classes) {
             emitClass(klass);
         }
-        emitMainMethod();
+        emitLLVMMainMethod();
         return buffer.toString();
     }
 
@@ -53,8 +53,8 @@ public class CodeGenerator implements Visitor<Reg> {
         registerCounter = labelCounter = 1;
 
         String name = surroundingClass.name + "_" + surroundingMethod.name;
-        String returnType = "i32"; //TODO
-        String parameters = "()";  //TODO
+        String returnType = "i32"; //TODO: Fix this in Phase II
+        String parameters = "()";  //TODO: Fix this in Phase II
 
         emit("define " + returnType + " @" + name + parameters + " {");
         emit(freshLabel("entry") + ":");
@@ -65,17 +65,29 @@ public class CodeGenerator implements Visitor<Reg> {
 
     @Override
     public Reg visitAssignment(Assignment assignment) {
-        return null;
+        // TODO: Revise this part to get variable's info from the environment
+        Reg rhsResult = assignment.rhs.accept(this);
+        emitInst("store i32 " + rhsResult + ", i32* %" + assignment.name);
+        return rhsResult;
     }
 
     @Override
     public Reg visitBinary(Binary binary) {
-        return null;
+        Reg leftResult = binary.left.accept(this);
+        Reg rightResult = binary.right.accept(this);
+        String llvmop = llvmInstFor(binary.op);
+        Reg result = freshReg();
+        emitInst(result, llvmop + " i32 " + leftResult + ", " + rightResult);
+        return result;
     }
 
     @Override
     public Reg visitBlock(Block block) {
-        return null;
+        Reg result = null;
+        for (Expr expr : block.exprs) {
+            result = expr.accept(this);
+        }
+        return result;
     }
 
     @Override
@@ -100,12 +112,17 @@ public class CodeGenerator implements Visitor<Reg> {
 
     @Override
     public Reg visitId(Id id) {
-        return null;
+        // TODO: Revise this part to get variable's info from the environment
+        Reg result = freshReg();
+        emitInst(result, "load i32, i32* %" + id.name);
+        return result;
     }
 
     @Override
     public Reg visitIntConst(IntConst intConst) {
-        return null;
+        Reg result = freshReg();
+        emitInst(result, "add i32 0, " + intConst.value);
+        return result;
     }
 
     @Override
@@ -115,12 +132,39 @@ public class CodeGenerator implements Visitor<Reg> {
 
     @Override
     public Reg visitLet(Let let) {
-        return null;
+        // TODO: Revise this part.
+        // Place the bound variable's info into the environment.
+        // Remember that the variable's scope is the let's body.
+        // You should remove the variable from the
+        // environment when you're done codegen'ing the body.
+        Reg initResult = let.initialization.accept(this);
+        emitInst("%" + let.name + " = alloca i32");
+        emitInst("store i32 " + initResult + ", i32* %" + let.name);
+        Reg bodyResult = let.body.accept(this);
+        return bodyResult;
     }
 
     @Override
     public Reg visitLoop(Loop loop) {
-        return null;
+        String condBlock = freshLabel("cond");
+        String bodyBlock = freshLabel("body");
+        String endBlock = freshLabel("end");
+
+        emitInst("br label %" + condBlock);
+
+        emit(condBlock + ":");
+        Reg condResult = loop.condition.accept(this);
+        emitInst("br i1 " + condResult + ", label %" + bodyBlock + ", label %" + endBlock);
+
+        emit(bodyBlock + ":");
+        Reg bodyResult = loop.body.accept(this);
+        emitInst("br label %" + condBlock);
+
+        emit(endBlock + ":");
+        // Loops in Phase I trivially evaluate to 0.
+        Reg result = freshReg();
+        emitInst(result, "add i32 0, 0");
+        return result;
     }
 
     @Override
@@ -170,14 +214,14 @@ public class CodeGenerator implements Visitor<Reg> {
     }
 
     // Emit the method that will be invoked by lli.
-    private void emitMainMethod() {
+    private void emitLLVMMainMethod() {
         emit("define i32 @main() {");
         emitInst("%r = call i32 @Main_main()");
         emitInst("ret i32 %r");
         emit("}");
     }
 
-    private Reg freshName() {
+    private Reg freshReg() {
         return new Reg(registerCounter++);
     }
 
@@ -200,13 +244,13 @@ public class CodeGenerator implements Visitor<Reg> {
 
     private String llvmInstFor(BinaryOperator op) {
         switch (op) {
-            case ADD: return "add";
-            case SUBTRACT: return "sub";
-            case MULTIPLY: return "mul";
-            case DIVIDE: return "sdiv";
-            case LESSTHAN: return "icmp slt";
+            case ADD:        return "add";
+            case SUBTRACT:   return "sub";
+            case MULTIPLY:   return "mul";
+            case DIVIDE:     return "sdiv";
+            case LESSTHAN:   return "icmp slt";
             case LESSTHANEQ: return "icmp sle";
-            case EQUALS: return "icmp eq";
+            case EQUALS:     return "icmp eq";
         }
         return null;
     }
