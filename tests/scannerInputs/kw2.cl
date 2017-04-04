@@ -1,0 +1,1 @@
+inherits INHERITS Inherits iNHERITS

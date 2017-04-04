@@ -1,0 +1,1 @@
+isvoid ISVOID iSVOID IsVoid

@@ -1,0 +1,1 @@
+class--comment with EOF

@@ -1,0 +1,15 @@
+#name "scannerInputs/kw6.cl"
+#1 CASE
+#1 OF
+#1 OF
+#1 ESAC
+#1 CASE
+#1 OF
+#1 ESAC
+#1 CASE
+#1 OF
+#1 ESAC
+#1 CASE
+#1 OF
+#1 ESAC
+#2 EOF

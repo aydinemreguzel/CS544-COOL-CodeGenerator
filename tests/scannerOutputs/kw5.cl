@@ -1,0 +1,10 @@
+#name "scannerInputs/kw5.cl"
+#1 LET
+#1 IN
+#1 LET
+#1 IN
+#1 LET
+#1 IN
+#1 LET
+#1 IN
+#2 EOF
