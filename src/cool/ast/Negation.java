@@ -1,7 +1,5 @@
 package cool.ast;
 
-import cool.visitor.Visitor;
-
 public class Negation extends Expr {
     public final Expr expr;
 

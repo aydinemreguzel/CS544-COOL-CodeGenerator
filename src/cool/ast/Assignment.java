@@ -1,7 +1,5 @@
 package cool.ast;
 
-import cool.visitor.Visitor;
-
 public class Assignment extends Expr {
     public final String name;
     public final Expr rhs;

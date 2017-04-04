@@ -1,7 +1,8 @@
 package cool.ast;
 
-import cool.visitor.Visitor;
+import cool.sema.Type;
 
 public abstract class Expr {
+    public Type type;
     public abstract <R> R accept(Visitor<R> visitor);
 }

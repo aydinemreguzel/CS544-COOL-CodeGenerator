@@ -1,7 +1,5 @@
 package cool.ast;
 
-import cool.visitor.Visitor;
-
 public class Conditional extends Expr {
     public final Expr condition;
     public final Expr thenBranch;

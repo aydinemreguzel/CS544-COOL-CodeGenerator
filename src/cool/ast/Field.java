@@ -1,7 +1,5 @@
 package cool.ast;
 
-import cool.visitor.Visitor;
-
 public class Field extends Feature {
     public final String name;
     public final String type;

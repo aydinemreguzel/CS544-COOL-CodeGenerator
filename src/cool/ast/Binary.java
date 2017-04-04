@@ -1,7 +1,5 @@
 package cool.ast;
 
-import cool.visitor.Visitor;
-
 public class Binary extends Expr {
     public final BinaryOperator op;
     public final Expr left;

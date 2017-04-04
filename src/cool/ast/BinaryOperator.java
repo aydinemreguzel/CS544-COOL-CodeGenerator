@@ -1,7 +1,6 @@
 package cool.ast;
 
 import cool.scanner.Token;
-import cool.scanner.TokenType;
 
 public enum BinaryOperator {
     ADD, SUBTRACT, MULTIPLY, DIVIDE,
@@ -17,6 +16,18 @@ public enum BinaryOperator {
             case STAR:       return MULTIPLY;
             case SLASH:      return DIVIDE;
             default:         throw new Error("No operator exists for token " + token);
+        }
+    }
+
+    public boolean isArithmeticOp() {
+        switch (this) {
+            case ADD:
+            case SUBTRACT:
+            case MULTIPLY:
+            case DIVIDE:
+                return true;
+            default:
+                return false;
         }
     }
 }

@@ -1,6 +1,5 @@
 package cool.ast;
 
-import cool.visitor.Visitor;
 import java.util.List;
 
 public class DynamicDispatch extends Expr {

@@ -1,7 +1,5 @@
 package cool.ast;
 
-import cool.visitor.Visitor;
-
 public class BoolConst extends Expr {
     public final boolean value;
 

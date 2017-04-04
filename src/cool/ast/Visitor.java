@@ -1,8 +1,7 @@
-package cool.visitor;
-
-import cool.ast.*;
+package cool.ast;
 
 public interface Visitor<R> {
+    void visitClass(Klass klass);
     void visitField(Field field);
     void visitMethod(Method method);
 

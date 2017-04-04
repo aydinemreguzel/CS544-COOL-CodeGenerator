@@ -1,12 +1,10 @@
 package cool.ast;
 
-import cool.visitor.Visitor;
-
 public class New extends Expr {
-    public final String type;
+    public final String className;
 
-    public New(String type) {
-        this.type = type;
+    public New(String className) {
+        this.className = className;
     }
 
     @Override

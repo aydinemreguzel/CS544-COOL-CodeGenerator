@@ -1,7 +1,5 @@
 package cool.ast;
 
-import cool.visitor.Visitor;
-
 public class IsVoid extends Expr {
     public final Expr expr;
 
